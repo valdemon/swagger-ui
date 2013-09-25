@@ -83,15 +83,16 @@ class OperationView extends Backbone.View
 
       for o in form.find("input")
         if(o.value? && jQuery.trim(o.value).length > 0)
-          map[o.name] = encodeURI(o.value)
+          map[o.name] = o.value
 
       for o in form.find("textarea")
         if(o.value? && jQuery.trim(o.value).length > 0)
           map["body"] = o.value
 
-      for o in form.find("select")
-        if(o.value? && jQuery.trim(o.value).length > 0)
-          map[o.name] = o.value
+      for o in form.find("select") 
+        val = this.getSelectedValue o
+        if(val? && jQuery.trim(val).length > 0)
+          map[o.name] = val
 
       opts.responseContentType = $("div select[name=responseContentType]", $(@el)).val()
       opts.requestContentType = $("div select[name=parameterContentType]", $(@el)).val()
@@ -102,7 +103,17 @@ class OperationView extends Backbone.View
 
   success: (response, parent) ->
     parent.showCompleteStatus response
-
+  
+  getSelectedValue: (select) ->
+    if !select.multiple 
+      select.value
+    else
+      options = []
+      options.push opt.value for opt in select.options when opt.selected
+      if options.length > 0 
+        options.join ","
+      else
+        null
 
   # handler for hide response link
   hideResponse: (e) ->
@@ -194,7 +205,7 @@ class OperationView extends Backbone.View
     if content == undefined
       code = $('<code />').text("no content")
       pre = $('<pre class="json" />').append(code)
-    else if contentType.indexOf("application/json") == 0
+    else if contentType.indexOf("application/json") == 0 || contentType.indexOf("application/hal+json") == 0
       code = $('<code />').text(JSON.stringify(JSON.parse(content), null, 2))
       pre = $('<pre class="json" />').append(code)
     else if contentType.indexOf("application/xml") == 0
