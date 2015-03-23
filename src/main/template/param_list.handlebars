@@ -1,14 +1,14 @@
 <td class='code'>{{name}}</td>
 <td>
-  <select {{#if allowMultiple}} multiple='multiple'{{/if}} class='parameter' name='{{name}}'>
+  <select {{#isArray this}} multiple='multiple'{{/isArray}} class='parameter' name='{{name}}'>
     {{#if required}}
     {{else}}
-      {{#if defaultValue}}
+      {{#if default}}
       {{else}}
-        {{#if allowMultiple}}
-         {{else}}
+        {{#isArray this}}
+        {{else}}
           <option selected="" value=''></option>
-         {{/if}}
+        {{/isArray}}
       {{/if}}
     {{/if}}
     {{#each allowableValues.descriptiveValues}}
@@ -20,6 +20,6 @@
     {{/each}}
   </select>
 </td>
-<td>{{{description}}}</td>
+<td class="markdown">{{{description}}}</td>
 <td>{{{paramType}}}</td>
 <td><span class="model-signature"></span></td>
